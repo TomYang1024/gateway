@@ -298,6 +298,8 @@ def create_app(settings: Settings | None = None, *, transport=None):
 
     @app.post("/v1/generate")
     async def generate(body: GatewayRequest, request: Request, who=Depends(identity)):
+        if body.stream:
+            return await stream(body, request, who)
         return await connected(
             request, app.state.gateway.generate(body, who, request.state.received_at), app.state.inflight
         )

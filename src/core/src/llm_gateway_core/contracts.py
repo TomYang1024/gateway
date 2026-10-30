@@ -6,7 +6,7 @@ from decimal import Decimal
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 
 def uid(prefix: str) -> str:
@@ -94,8 +94,17 @@ class BusinessContext(Contract):
     metadata: dict[str, str] = Field(default_factory=dict, max_length=16)
 
 
+class ResponseFormat(Contract):
+    type: Literal["text", "json_object", "json_schema"]
+    json_schema: dict[str, Any] | None = None
+
+
 class GatewayRequest(Contract):
-    logical_model: str = Field(min_length=1, max_length=128)
+    logical_model: str = Field(
+        min_length=1, max_length=128, validation_alias=AliasChoices("logical_model", "model")
+    )
+    stream: bool = False
+    response_format: ResponseFormat | None = None
     messages: list[Message] | None = Field(default=None, min_length=1, max_length=256)
     prompt: PromptRef | None = None
     generation: dict[str, Any] = Field(default_factory=dict, max_length=16)
@@ -110,6 +119,16 @@ class GatewayRequest(Contract):
 
     @model_validator(mode="after")
     def input_contract(self):
+        if self.response_format:
+            if self.requirements.structured_output != "none" or self.output_schema:
+                raise ValueError("response_format conflicts with requirements.structured_output")
+            if self.response_format.type != "text":
+                self.requirements.structured_output = self.response_format.type
+            if self.response_format.type == "json_schema":
+                schema = (self.response_format.json_schema or {}).get("schema")
+                if not isinstance(schema, dict):
+                    raise ValueError("json_schema response_format requires json_schema.schema")
+                self.output_schema = schema
         if (self.messages is None) == (self.prompt is None):
             raise ValueError("exactly one of messages or prompt is required")
         if len({t.name for t in self.tools}) != len(self.tools):

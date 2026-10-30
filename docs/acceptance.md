@@ -31,7 +31,11 @@
 | 日志不含敏感扩展、健康和内部 Metrics | `test_log_does_not_include_sensitive_extra`、健康/指标测试 | 单元 + HTTP |
 | 非 root 镜像、迁移、健康、真实容器网络调用 | Docker Compose + `scripts/container_smoke.py` | 本地容器 |
 
-全套容器测试通过 `make test` 执行，JUnit 与覆盖率输出到 `test-results/`。最近一次（2026-10-31，`make finish-acceptance`）：143 项中 137 项通过、6 项真实测试默认跳过、0 失败，行覆盖率 87.87%，容器冒烟通过。错误路径包含请求拒绝和失败 Attempt，不把 Mock 输出认定为真实厂商验收。测试仅重置专用 `*_test` 数据库及 Redis DB 15，不改开发/生产策略，不发真实通知。
+全套容器测试通过 `make test` 执行，JUnit 与覆盖率输出到 `test-results/`。最近一次（2026-10-31，`make test`）：168 项中 162 项通过、6 项真实测试默认跳过、0 失败，行覆盖率 88%。错误路径包含请求拒绝和失败 Attempt，不把 Mock 输出认定为真实厂商验收。测试仅重置专用 `*_test` 数据库及 Redis DB 15，不改开发/生产策略，不发真实通知。
+
+## 功能验证
+
+`make verify` 运行 `tests/acceptance/test_features.py`，经真实 API、PostgreSQL、Redis 和模拟上游逐项验证统一抽象、流式、结构化输出、Prompt 模板、可观测数据、统一错误、指数退避重试（最多 3 次）和按模型限流，结果写入 `test-results/feature-verification.xml`。
 
 ## 阶段出口与外部环境
 

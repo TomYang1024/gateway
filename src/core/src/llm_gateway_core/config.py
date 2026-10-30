@@ -98,6 +98,7 @@ class ModelSpec(ConfigModel):
     parameter_constraints: dict[str, dict[str, Any]] = {}
     defaults: dict[str, Any] = {"max_output_tokens": 1024}
     pricing: Pricing
+    rpm: int | None = Field(default=None, gt=0)
 
 
 class Candidate(ConfigModel):
@@ -111,7 +112,7 @@ class RoutePolicy(ConfigModel):
     data_level: str = "public"
     allowed_regions: list[str] = ["cn"]
     allowed_vendors: list[str] = ["glm", "deepseek", "moonshot"]
-    max_retries_per_candidate: int = Field(default=2, ge=0, le=5)
+    max_retries_per_candidate: int = Field(default=2, ge=0, le=3)
     max_switches: int = Field(default=1, ge=0, le=1)
     initial_delay_s: float = Field(default=0.5, ge=0, le=10)
     max_delay_s: float = Field(default=5, ge=0, le=30)

@@ -119,6 +119,7 @@ models:
       output: '2'
       cache_read: '0.1'
       cache_write: '1'
+    rpm: null
   deepseek:
     upstream_model: mock-deepseek
     capabilities:
@@ -161,6 +162,7 @@ models:
       output: '2'
       cache_read: '0.1'
       cache_write: '1'
+    rpm: null
   kimi:
     upstream_model: mock-kimi
     capabilities:
@@ -203,6 +205,7 @@ models:
       output: '2'
       cache_read: '0.1'
       cache_write: '1'
+    rpm: null
 routes:
   order_extraction:
     candidates:
@@ -253,14 +256,14 @@ routes:
     max_cost: null
     allow_model_repair: false
   test_glm:
-    candidates:
+    candidates: &id001
     - provider: glm
       model: glm
-    defaults: {}
+    defaults: &id002 {}
     data_level: public
-    allowed_regions:
+    allowed_regions: &id003
     - cn
-    allowed_vendors:
+    allowed_vendors: &id004
     - glm
     - deepseek
     - moonshot
@@ -273,14 +276,14 @@ routes:
     max_cost: null
     allow_model_repair: false
   test_deepseek:
-    candidates:
+    candidates: &id005
     - provider: deepseek
       model: deepseek
-    defaults: {}
+    defaults: &id006 {}
     data_level: public
-    allowed_regions:
+    allowed_regions: &id007
     - cn
-    allowed_vendors:
+    allowed_vendors: &id008
     - glm
     - deepseek
     - moonshot
@@ -293,18 +296,60 @@ routes:
     max_cost: null
     allow_model_repair: false
   test_kimi:
-    candidates:
+    candidates: &id009
     - provider: kimi
       model: kimi
-    defaults: {}
+    defaults: &id010 {}
     data_level: public
-    allowed_regions:
+    allowed_regions: &id011
     - cn
-    allowed_vendors:
+    allowed_vendors: &id012
     - glm
     - deepseek
     - moonshot
     max_retries_per_candidate: 2
+    max_switches: 1
+    initial_delay_s: 0.5
+    max_delay_s: 5.0
+    max_total_attempts: 4
+    total_timeout_s: 60.0
+    max_cost: null
+    allow_model_repair: false
+  glm:
+    candidates: *id001
+    defaults: *id002
+    data_level: public
+    allowed_regions: *id003
+    allowed_vendors: *id004
+    max_retries_per_candidate: 3
+    max_switches: 1
+    initial_delay_s: 0.5
+    max_delay_s: 5.0
+    max_total_attempts: 4
+    total_timeout_s: 60.0
+    max_cost: null
+    allow_model_repair: false
+  deepseek:
+    candidates: *id005
+    defaults: *id006
+    data_level: public
+    allowed_regions: *id007
+    allowed_vendors: *id008
+    max_retries_per_candidate: 3
+    max_switches: 1
+    initial_delay_s: 0.5
+    max_delay_s: 5.0
+    max_total_attempts: 4
+    total_timeout_s: 60.0
+    max_cost: null
+    allow_model_repair: false
+  kimi:
+    candidates: *id009
+    defaults: *id010
+    data_level: public
+    allowed_regions: *id011
+    allowed_vendors: *id012
+    max_retries_per_candidate: 3
     max_switches: 1
     initial_delay_s: 0.5
     max_delay_s: 5.0
@@ -333,6 +378,9 @@ applications:
     - test_glm
     - test_deepseek
     - test_kimi
+    - glm
+    - deepseek
+    - kimi
     rpm: 10000
     tpm: 10000000
     concurrency: 10

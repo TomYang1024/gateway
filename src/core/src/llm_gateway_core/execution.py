@@ -271,6 +271,14 @@ class Executor:
         await self.g.quotas.reserve(p.lease, consumed + candidate.reserved_tokens, p.app.tpm)
         await self.g.circuits.before(candidate.provider_id, candidate.model_id, self.remaining(p))
         adapter = self.g.factory.adapter(candidate.connection)
+        if candidate.model.rpm:
+            model_lease = await self.g.quotas.acquire(
+                f"model:{candidate.provider_id}:{candidate.model_id}",
+                candidate.model.rpm,
+                candidate.connection.concurrency,
+                self.remaining(p) + 5,
+            )
+            await self.g.quotas.release(model_lease)
         lease = await self.g.quotas.acquire(
             f"provider:{candidate.connection.vendor}:{candidate.connection.credential_identity}",
             candidate.connection.rpm,
@@ -344,7 +352,7 @@ class Executor:
                 await self.g.circuits.record(candidate.provider_id, candidate.model_id, False)
             elif error.code == "UPSTREAM_RATE_LIMITED":
                 await self.g.circuits.record(
-                    candidate.provider_id, candidate.model_id, False, error.retry_after or 1
+                    candidate.provider_id, candidate.model_id, False, error.retry_after or 0
                 )
         except Exception:
             logger.error("gateway.quota.cleanup_failed", extra={"context": {"call_id": p.context.call_id}})

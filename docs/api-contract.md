@@ -13,7 +13,7 @@
 | `GET /v1/calls/{call_id}` | 本应用调用摘要、Attempt 和路由拒绝记录 |
 | `GET /v1/reports/usage` | 本应用聚合，支持用例、模型、Prompt 版本、时间和分页 |
 
-请求必须有 `logical_model`，`messages` 与 `prompt` 二选一。`generation` 按模型→Prompt→路由→授权调用方覆盖的顺序合并，再执行模型与应用硬限制。类型、参数、权限或上下文超限均明确拒绝。`context` 只接受业务关联字段；team/application/key 和策略版本由可信认证生成，调用方不能覆盖。
+请求必须有 `model`（`logical_model` 的别名，二者等价），`messages` 与 `prompt` 二选一。`/v1/generate` 传 `stream: true` 时以 SSE 逐块返回，等同 `/v1/stream`。`response_format` 接受 `{"type":"json_object"}` 或 `{"type":"json_schema","json_schema":{"schema":{...}}}`，不能与 `requirements.structured_output` 同时使用。模型可配置独立 `rpm`，超限返回 429 `GATEWAY_RATE_LIMITED`；流式请求在开始输出前超限时，HTTP 状态仍为 200，错误由 `terminal` 事件返回。路由重试上限为每候选 3 次，指数退避。`generation` 按模型→Prompt→路由→授权调用方覆盖的顺序合并，再执行模型与应用硬限制。类型、参数、权限或上下文超限均明确拒绝。`context` 只接受业务关联字段；team/application/key 和策略版本由可信认证生成，调用方不能覆盖。
 
 ```json
 {

@@ -62,12 +62,21 @@ def development_snapshot(base="http://mock:8001"):
                 "order_extraction": {"candidates": candidates},
                 "assistant": {"candidates": candidates},
                 **{f"test_{v}": {"candidates": [{"provider": v, "model": v}]} for v in providers},
+                **{
+                    v: {"candidates": [{"provider": v, "model": v}], "max_retries_per_candidate": 3}
+                    for v in providers
+                },
             },
             "teams": {"demo": {}},
             "applications": {
                 "demo": {
                     "team_id": "demo",
-                    "use_cases": ["order_extraction", "assistant", *[f"test_{v}" for v in providers]],
+                    "use_cases": [
+                        "order_extraction",
+                        "assistant",
+                        *[f"test_{v}" for v in providers],
+                        *providers,
+                    ],
                     "rpm": 10000,
                     "tpm": 10000000,
                 }

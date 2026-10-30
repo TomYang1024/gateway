@@ -1,4 +1,4 @@
-.PHONY: install dev test unit lint format stop finish-acceptance acceptance-k3
+.PHONY: install dev test unit lint format stop finish-acceptance acceptance-k3 verify
 
 install:
 	uv sync --frozen --all-packages
@@ -9,6 +9,9 @@ dev: install
 
 test:
 	docker compose --profile test run --build --rm tests
+
+verify:
+	docker compose --profile test run --build --rm tests pytest tests/acceptance -v --junitxml=test-results/feature-verification.xml
 
 unit:
 	uv run --frozen pytest tests/unit tests/adapter_contract -q
