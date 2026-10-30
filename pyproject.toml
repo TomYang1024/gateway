@@ -1,0 +1,38 @@
+[project]
+name = "llm-gateway"
+version = "0.1.0"
+description = "LLM Gateway V1.3: governed HTTP inference and streaming"
+requires-python = ">=3.12,<3.15"
+dependencies = ["llm-gateway-api==0.1.0", "llm-gateway-sdk==0.1.0"]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "pytest-asyncio>=0.25,<2", "pytest-cov>=6,<8", "ruff>=0.11,<1", "asgi-lifespan>=2.1,<3"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["src/core", "src/services", "src/infrastructure", "src/api", "sdk/python"]
+
+[tool.uv.sources]
+llm-gateway-core = { workspace = true }
+llm-gateway-services = { workspace = true }
+llm-gateway-infrastructure = { workspace = true }
+llm-gateway-api = { workspace = true }
+llm-gateway-sdk = { workspace = true }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = ["integration: requires PostgreSQL and Redis", "live: requires explicit real-provider test authorization"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "ASYNC"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]

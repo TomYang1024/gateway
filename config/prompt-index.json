@@ -1,0 +1,13 @@
+[
+  {
+    "owner_team_id": "demo",
+    "applications": [
+      "demo"
+    ],
+    "use_cases": [
+      "order_extraction"
+    ],
+    "artifact": "extract_order/1.0.0",
+    "hash": "bd42a563c77b03b0e97f4d4927f8b4e5deaa3d2c0282af9cf9cdca39b85d410b"
+  }
+]

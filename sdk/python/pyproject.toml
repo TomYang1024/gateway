@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-gateway-sdk"
+version = "0.1.0"
+requires-python = ">=3.12,<3.15"
+description = "HTTP-only Python SDK for LLM Gateway"
+dependencies = ["llm-gateway-core==0.1.0", "httpx>=0.28,<0.29", "pydantic>=2.10,<3"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["llm_gateway_sdk"]

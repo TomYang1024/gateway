@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-gateway-core"
+version = "0.1.0"
+requires-python = ">=3.12,<3.15"
+description = "Gateway contracts, pure policies and execution state machine"
+dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_gateway_core"]

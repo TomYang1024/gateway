@@ -1,0 +1,7 @@
+name: extract_order
+version: 1.0.0
+logical_model: order_extraction
+generation:
+  max_output_tokens: 1024
+  temperature: 0
+status: published

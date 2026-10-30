@@ -1,0 +1,1 @@
+{"type":"object","properties":{"order_no":{"type":"string"}},"required":["order_no"],"additionalProperties":false}
